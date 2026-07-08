@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-test-app
+spec:
+  replicas: 2  # Number of pods
+  selector:
+    matchLabels:
+      app: kubernetes-test-app
+  template:
+    metadata:
+      labels:
+        app: kubernetes-test-app
+    spec:
+      containers:
+      - name: kubernetes-test-app
+        image: kubernetes-test-app:latest
+        imagePullPolicy: Never  # Tell Kubernetes not to pull from a registry
+        #image: coderay3000/kubernetes-test-app:latest(uncomment this line to use the image from Docker Hub or not to pull from a local image)
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-test-app
+spec:
+  selector:
+    app: kubernetes-test-app
+  ports:
+  - port: 8080
+    targetPort: 5000
